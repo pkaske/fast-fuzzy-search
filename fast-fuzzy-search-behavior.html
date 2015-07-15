@@ -69,6 +69,19 @@ Or see the LICENSE file that comes with this code.
       return this.output;
     },
 
+    /**
+     * Run a single item through the fuzzy search.
+     * Use this for the filter attribute of dom-repeat elements.
+     * @param  {*} item String|Object to search in.
+     * @return {Boolean}
+     */
+    compareItem: function(item) {
+      item = this.path ? this.get(this.path, item): item;
+      item = this.caseSensitive ? item : item.toLowerCase();
+      if (item === undefined) return false;
+      return fuzzysearch(this.caseSensitive ? this.term : this.term.toLowerCase(), item);
+    },
+
     _search: function() {
       if (!this.input) return;
 
@@ -77,12 +90,7 @@ Or see the LICENSE file that comes with this code.
         return;
       }
 
-      this.output = this.input.filter(function(item) {
-        item = this.path ? this.get(this.path, item): item;
-        item = this.caseSensitive ? item : item.toLowerCase();
-        if (item === undefined) return false;
-        return fuzzysearch(this.caseSensitive ? this.term : this.term.toLowerCase(), item);
-      }.bind(this));
+      this.output = this.input.filter(this.compareItem.bind(this));
     }
   };
 
