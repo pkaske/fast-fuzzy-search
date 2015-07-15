@@ -76,6 +76,7 @@ Or see the LICENSE file that comes with this code.
      * @return {Boolean}
      */
     compareItem: function(item) {
+      if (!this.term) return true;
       item = this.path ? this.get(this.path, item): item;
       item = this.caseSensitive ? item : item.toLowerCase();
       if (item === undefined) return false;
