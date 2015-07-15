@@ -28,8 +28,7 @@ Or see the LICENSE file that comes with this code.
        * See `Polymer.Base.get(path, root)` for more infos.
        */
       path: {
-        type: String,
-        observer: '_search'
+        type: String
       },
 
       /**
@@ -38,8 +37,7 @@ Or see the LICENSE file that comes with this code.
        * Use the `path` property with object arrays to define the property of each item were to search in.
        */
       input: {
-        type: Array,
-        observer: '_search'
+        type: Array
       },
 
       /**
@@ -68,7 +66,6 @@ Or see the LICENSE file that comes with this code.
     search: function(term, input) {
       this.term = term || this.term;
       this.input = input || this.input;
-      this._search();
       return this.output;
     },
 
