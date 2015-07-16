@@ -19,6 +19,7 @@ Or see the LICENSE file that comes with this code.
        */
       term: {
         type: String,
+        value: '',
         observer: '_search'
       },
 
@@ -37,7 +38,8 @@ Or see the LICENSE file that comes with this code.
        * Use the `path` property with object arrays to define the property of each item were to search in.
        */
       input: {
-        type: Array
+        type: Array,
+        observer: '_inputChanged'
       },
 
       /**
@@ -54,6 +56,10 @@ Or see the LICENSE file that comes with this code.
       caseSensitive: {
         type: Boolean,
         value: false
+      },
+
+      _lastTerm: {
+        type: String
       }
     },
 
@@ -64,8 +70,8 @@ Or see the LICENSE file that comes with this code.
      * @return {Array}       The filtered result
      */
     search: function(term, input) {
-      this.term = term || this.term;
       this.input = input || this.input;
+      this.term = term || this.term;
       return this.output;
     },
 
@@ -78,20 +84,41 @@ Or see the LICENSE file that comes with this code.
     compareItem: function(item) {
       if (!this.term) return true;
       item = this.path ? this.get(this.path, item): item;
-      item = this.caseSensitive ? item : item.toLowerCase();
       if (item === undefined) return false;
+      item = this.caseSensitive ? item : item.toLowerCase();
       return fuzzysearch(this.caseSensitive ? this.term : this.term.toLowerCase(), item);
     },
 
-    _search: function() {
-      if (!this.input) return;
+    reload: function() {
+      this._lastTerm = null;
+      this._search();
+    },
 
-      if (!this.term || this.term.length == 0) {
+    _search: function() {
+      if (!this.input || this.input.length == 0) return;
+
+      if (this.term.length == 0 && this.term != this._lastTerm) {
+        this._lastTerm = '';
+
         this.output = this.input.slice(0);
         return;
       }
 
-      this.output = this.input.filter(this.compareItem.bind(this));
+      if (this.term != this._lastTerm) {
+        this._lastTerm = this.term;
+        this.output = this.input.filter(this.compareItem.bind(this));
+      }
+    },
+
+    _inputChanged: function(newInput, oldInput) {
+      if (!this.term) {
+        this._search();
+      }
+      return;
+
+      if (!oldInput || oldInput.length == 0) {
+        this._search();
+      }
     }
   };
 
