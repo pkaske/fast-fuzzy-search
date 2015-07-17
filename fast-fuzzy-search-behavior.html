@@ -64,29 +64,20 @@ Or see the LICENSE file that comes with this code.
     },
 
     /**
-     * Perform search using the supplied term and (optionally) data.
-     * @param  {String} term  Term to search for in all items of the data.
-     * @param  {Array} input Array of all items to search in.
-     * @return {Array}       The filtered result
+     * Perform a fuzzy search completely aside from the behavior's configuration.
+     * @param  {String} term            The search term.
+     * @param  {Array} input            List of items to search in.
+     * @param  {String} path            Path to the haystack in each item.
+     * @param  {Boolean} caseSensitive  If the search should be case sensitive (insensitive by default).
+     * @return {Array}                  The filtered list of items.
      */
-    search: function(term, input) {
-      this.input = input || this.input;
-      this.term = term || this.term;
-      return this.output;
-    },
-
-    /**
-     * Run a single item through the fuzzy search.
-     * Use this for the filter attribute of dom-repeat elements.
-     * @param  {*} item String|Object to search in.
-     * @return {Boolean}
-     */
-    compareItem: function(item) {
-      if (!this.term) return true;
-      item = this.path ? this.get(this.path, item): item;
-      if (item === undefined) return false;
-      item = this.caseSensitive ? item : item.toLowerCase();
-      return fuzzysearch(this.caseSensitive ? this.term : this.term.toLowerCase(), item);
+    sideSearch: function(term, input, path, caseSensitive) {
+      term = caseSensitive ? term : term.toLowerCase();
+      return input.filter(function(item) {
+        item = path ? this.get(this.path, item): item;
+        if (item === undefined) return false;
+        return fuzzysearch(term, caseSensitive ? item : item.toLowerCase());
+      }.bind(this));
     },
 
     reload: function() {
@@ -95,23 +86,35 @@ Or see the LICENSE file that comes with this code.
     },
 
     _search: function() {
-      if (!this.input || this.input.length == 0) return;
+      if (!this.input || this.input.length == 0 || this.term === undefined) return;
 
       if (this.term.length == 0 && this.term != this._lastTerm) {
         this._lastTerm = '';
-
         this.output = this.input.slice(0);
         return;
       }
 
       if (this.term != this._lastTerm) {
         this._lastTerm = this.term;
-        this.output = this.input.filter(this.compareItem.bind(this));
+        this.output = this.input.filter(this._compareItem.bind(this));
       }
     },
 
+    /**
+     * Run a single item through the fuzzy search.
+     * @param  {*} item String|Object to search in.
+     * @return {Boolean}
+     */
+    _compareItem: function(item) {
+      if (!this.term) return true;
+      item = this.path ? this.get(this.path, item): item;
+      if (item === undefined) return false;
+      item = this.caseSensitive ? item : item.toLowerCase();
+      return fuzzysearch(this.caseSensitive ? this.term : this.term.toLowerCase(), item);
+    },
+
     _inputChanged: function(newInput, oldInput) {
-      if (!this.term) {
+      if (this.term != undefined) {
         this._search();
       }
       return;
