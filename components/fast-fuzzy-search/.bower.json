@@ -1,0 +1,40 @@
+{
+  "name": "fast-fuzzy-search",
+  "authors": [
+    "Peter Kaske <p.kaske@gmail.com>"
+  ],
+  "description": "Simple component that uses the tiny and blazing-fast [fuzzysearch](https://github.com/bevacqua/fuzzysearch) library to filter data.",
+  "license": "MIT",
+  "keywords": [
+    "polymer",
+    "web-components",
+    "web-component",
+    "fuzzy",
+    "search",
+    "filter"
+  ],
+  "main": "fast-fuzzy-search.html",
+  "ignore": [
+    "/.*",
+    "/test/",
+    "/demo/"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.0.0",
+    "fuzzysearch": "pkaske/fuzzysearch#^1.0.0"
+  },
+  "devDependencies": {
+    "iron-component-page": "PolymerElements/iron-component-page#^1.0.0"
+  },
+  "homepage": "https://github.com/pkaske/fast-fuzzy-search",
+  "_release": "3f6f8328fb",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "3f6f8328fb26f465f7a67088942d17246b375c96"
+  },
+  "_source": "git://github.com/pkaske/fast-fuzzy-search.git",
+  "_target": "master",
+  "_originalSource": "pkaske/fast-fuzzy-search",
+  "_direct": true
+}
