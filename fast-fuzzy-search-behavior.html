@@ -105,7 +105,11 @@ Or see the LICENSE file that comes with this code.
     },
 
     _search: function() {
-      if (!this.input || this.input.length == 0 || this.term === undefined) return;
+      if (!this.input || this.term === undefined) return;
+      if (this.input.length == 0) {
+        this.output = [];
+        return;
+      }
 
       if (this.term.length == 0 && this.term != this._lastTerm) {
         this._lastTerm = '';
