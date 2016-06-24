@@ -105,7 +105,7 @@ Or see the LICENSE file that comes with this code.
       this._search();
     },
 
-    _search: function() {
+    _search: function(change) {
       if (!this.input || this.term === undefined) return;
       if (this.input.length == 0) {
         this.output = [];
@@ -114,14 +114,27 @@ Or see the LICENSE file that comes with this code.
 
       if (this.term.length == 0 && this.term != this._lastTerm) {
         this._lastTerm = '';
-        this.output = this.input.slice(0);
+        if (!change || !change.path || change.path === 'input') {
+          this.output = this.input.slice(0);
+        } else {
+          this.set(change.path.replace('input', 'output'), this.get(change.path));
+        }
         return;
       }
 
       if (this.term != this._lastTerm) {
         this._lastTerm = this.term;
         this._termParts = this.term.split(' ');
+        this._removed = 0;
+        this._notifyTranslatedIdx = null;
+        this._pendingNotifyIdx = change && change.path && change.path.indexOf('.') > -1 ? parseInt(change.path.split('.')[1].slice(1), 10) : null;
         this.output = this.input.filter(this._compareItem.bind(this));
+
+        if (this._notifyTranslatedIdx !== null) {
+          this.async(function() {
+            this.notifyPath(change.path.replace(/input\.#([0-9])+?\./, 'output.#' + this._notifyTranslatedIdx + '.'), this.get(change.path));
+          });
+        }
       }
     },
 
@@ -130,7 +143,7 @@ Or see the LICENSE file that comes with this code.
      * @param  {*} item String|Object to search in.
      * @return {Boolean}
      */
-    _compareItem: function(item) {
+    _compareItem: function(item, idx) {
       if (!this.term) return true;
 
       var tl = this._termParts.length;
@@ -147,6 +160,9 @@ Or see the LICENSE file that comes with this code.
             --p;
             var v = this.get(this.searchPaths[p], item);
             if (v && fuzzysearch(t, this.caseSensitive ? v : v.toLowerCase())) {
+              if (idx === this._pendingNotifyIdx) {
+                this._notifyTranslatedIdx = idx - this._removed;
+              }
               return true;
             }
           }
@@ -154,16 +170,22 @@ Or see the LICENSE file that comes with this code.
           if (typeof item !== 'string') return false;
           item = this.caseSensitive ? item : item.toLowerCase();
           if (fuzzysearch(t, item)) {
+            if (idx === this._pendingNotifyIdx) {
+              this._notifyTranslatedIdx = idx - this._removed;
+            }
             return true;
           }
         }
       }
 
+      this._removed++;
+
       return false;
     },
 
     _inputChanged: function(change) {
-      this.reload();
+      this._lastTerm = null;
+      this._search(change);
     }
   };
 
