@@ -1,7 +1,7 @@
 <!doctype html>
 <!--
 @license
-Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+Copyright (c) 2018 The Polymer Project Authors. All rights reserved.
 This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
 The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
 The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
@@ -14,48 +14,46 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
   <title>fast-fuzzy-search Demo</title>
   <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
-  <script>
-    // window.Polymer = window.Polymer || {};
-    // window.Polymer.dom = 'shadow';
-  </script>
   <link rel="import" href="../fast-fuzzy-search.html">
 
   <style is="custom-style">
   </style>
 
 </head>
-<body style="">
-  <template id="t" is="dom-bind">
-    <input type="text" name="name" value="" id="term">
-    <fast-fuzzy-search id="my-search" term="[[term]]" path="name" input="{{data}}" output="{{filteredItems}}"></fast-fuzzy-search>
-    <template is="dom-repeat" items="{{filteredItems}}">
-      <div>{{item.name}}</div>
+<body>
+  <dom-bind id="t">
+    <template>
+      <input type="text" name="name" value="" id="term">
+      <fast-fuzzy-search id="my-search" term="[[term]]" path="name" input="{{data}}" output="{{filteredItems}}"></fast-fuzzy-search>
+
+      <dom-repeat items="{{filteredItems}}">
+        <template>
+          <div>{{item.name}}</div>
+        </template>
+      </dom-repeat>
     </template>
-  </template>
+  </dom-bind>
   <script>
     var t = document.querySelector('#t');
 
-    // The dom-change event signifies when the template has stamped its DOM.
-    t.addEventListener('dom-change', function() {
-      t.filteredItems = t.data = [
-        { name: "Apple" },
-        { name: "Banana" },
-        { name: "Kiwi" },
-        { name: "Melon" },
-        { name: "Grapefruit" },
-        { name: "Potato" },
-        { name: "Strawberry" },
-        { name: "Blueberry" },
-        { name: "Ginger" },
-        { name: "Starfruit" },
-      ];
+    t.filteredItems = t.data = [
+      { name: "Apple" },
+      { name: "Banana" },
+      { name: "Kiwi" },
+      { name: "Melon" },
+      { name: "Grapefruit" },
+      { name: "Potato" },
+      { name: "Strawberry" },
+      { name: "Blueberry" },
+      { name: "Ginger" },
+      { name: "Starfruit" },
+    ];
 
-      var term = t.$.term;
-      var mySearch = t.$['my-search'];
+    var term = t.$.term;
+    var mySearch = t.$['my-search'];
 
-      term.addEventListener('keyup', function() {
-        t.term = term.value;
-      });
+    term.addEventListener('keyup', function() {
+      t.term = term.value;
     });
   </script>
 </body>

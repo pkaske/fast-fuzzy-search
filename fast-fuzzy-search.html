@@ -1,11 +1,11 @@
 <!--
 @license
-Copyright (c) 2015 Peter Kaske <p.kaske@gmail.com>. All rights reserved.
+Copyright (c) 2018 Peter Kaske <p.kaske@gmail.com>. All rights reserved.
 This code may only be used under the MIT license found at http://opensource.org/licenses/MIT.
 Or see the LICENSE file that comes with this code.
 -->
 <link rel="import" href="../polymer/polymer.html">
-<link rel="import" href="fast-fuzzy-search-behavior.html">
+<link rel="import" href="fast-fuzzy-search-mixin.html">
 
 <!--
 Simple component that uses the tiny and blazing-fast [fuzzysearch](https://github.com/bevacqua/fuzzysearch) library to filter data.
@@ -23,11 +23,9 @@ Example
 -->
 <dom-module id="fast-fuzzy-search"></dom-module>
 <script>
-  Polymer({
-    is: "fast-fuzzy-search",
+  class FastFuzzySearch extends FastFuzzySearchMixin(Polymer.Element) {
+    static get is() { return 'fast-fuzzy-search'; }
+  }
 
-    behaviors: [
-      Polymer.FastFuzzySearchBehavior
-    ]
-  });
+  window.customElements.define(FastFuzzySearch.is, FastFuzzySearch);
 </script>
